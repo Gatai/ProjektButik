@@ -64,6 +64,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Discount.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Games.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

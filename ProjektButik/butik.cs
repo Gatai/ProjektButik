@@ -16,15 +16,20 @@ namespace ProjektButik
         private View viewItems;
         private Label label;
 
+        private ListBox listItemsBox;
+        private ListBox selectedItemsBox;
 
-        List<string> _items = new List<string>();
+        string[] gamesFile = File.ReadAllLines("Games.txt");
+
+
+        //List<string> _items = new List<string>();
 
         public Butik()
         {
             Text = "Game Store";
             Size = new Size(800, 600);
             Font = new Font("corbel", 10);
-            
+
 
             TableLayoutPanel table = new TableLayoutPanel
             {
@@ -32,22 +37,22 @@ namespace ProjektButik
                 RowCount = 4,
                 Dock = DockStyle.Fill,
                 BackColor = Color.Bisque
-                
+
             };
             Controls.Add(table);
             //den hittar ej filen why?
             //view browser
-            string[] gamesFile = File.ReadAllLines("Games.txt");
+            //string[] gamesFile = File.ReadAllLines("Games.txt");
 
-            ListBox listItemsBox = new ListBox
+            listItemsBox = new ListBox
             {
                 //lägg till rubriker (produkt, pris )
-                Size = new Size(300,300),
+                Size = new Size(300, 300),
 
             };
             table.Controls.Add(listItemsBox);
 
-            ListBox selectedItemsBox = new ListBox
+            selectedItemsBox = new ListBox
             {
                 //lägg till rubriker (produkt, pris )
 
@@ -55,17 +60,26 @@ namespace ProjektButik
                 Dock = DockStyle.Right
             };
             table.Controls.Add(selectedItemsBox);
+            selectedItemsBox.SelectedIndexChanged += selectedItems;
 
             //_items.Add("items");
             //_items.Add("Price");
             //listItemsBox.DataSource = _items;
 
+           
+           
+
             foreach (string row in gamesFile)
             {
                 string[] parts = row.Split('|');
+
+                //string[] tempitem = parts[0] + " " + parts[1] + "kr";
+
                 listItemsBox.Items.Add(parts[0] + " " + parts[1] + "kr");
 
             }
+
+            //if (listItemsBox.Items.)
 
             addButton = new Button
             {
@@ -96,7 +110,7 @@ namespace ProjektButik
 
             label = new Label
             {
-                Text= "Discount Code",
+                Text = "Discount Code",
                 Dock = DockStyle.Right,
                 BackColor = Color.Orange
             };
@@ -104,9 +118,14 @@ namespace ProjektButik
 
             TextBox discountBox = new TextBox
             {
-               Dock = DockStyle.None,
+                Dock = DockStyle.None,
             };
             table.Controls.Add(discountBox);
+        }
+
+        private void selectedItems(object sender, EventArgs e)
+        {
+          
         }
 
         private void removeButtonClick(object sender, EventArgs e)
@@ -116,27 +135,18 @@ namespace ProjektButik
 
         private void addButtonClick(object sender, EventArgs e)
         {
-            MessageBox.Show("hello");
+            foreach (string row in gamesFile)
+            {
+                string[] parts = row.Split('|');
+                selectedItemsBox.Items.Add(parts[0] + " " + parts[1] + "kr");
+
+            }
+            selectedItemsBox.Text = ("You have selected " + selectedItemsBox.SelectedIndex);
         }
 
 
 
-        //private void ChangeEventHandler(object sender, EventArgs e)
-        //{
-        //    ListBox cbo = (ListBox)sender;
-
-        //    string[] dataFile = (string[])cbo.Tag;
-
-        //    string row = dataFile[cbo.SelectedIndex];
-        //    string[] parts = row.Split('|');
-
-        //    label.Text = ("You have selected " + cbo.SelectedIndex +
-        //          ": " +
-        //        cbo.SelectedItem + " " + parts[1] + " " + parts[2]);
-        //}
-
-
-        //en event handler utaför klassen 
+        
     }
 }
 
