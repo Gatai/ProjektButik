@@ -13,11 +13,25 @@ namespace ProjektButik
     {
         private Button addButton;
         private Button removeButton;
+        private Button saveButton;
+        private PictureBox pictureBox;
+
         private View viewItems;
         private Label label;
 
         private ListBox listItemsBox;
         private ListBox selectedItemsBox;
+        private TableLayoutPanel table;
+        private TableLayoutPanel informationTable;
+
+
+        public class linkedDes
+        {
+            public string name;
+            public string des;
+            public int id;
+        }
+
 
         string[] gamesFile = File.ReadAllLines("Games.txt");
 
@@ -27,30 +41,35 @@ namespace ProjektButik
         public Butik()
         {
             Text = "Game Store";
-            Size = new Size(800, 600);
+            Size = new Size(900, 800);
             Font = new Font("corbel", 10);
 
-
-            TableLayoutPanel table = new TableLayoutPanel
+            table = new TableLayoutPanel
             {
-                ColumnCount = 2,
+                ColumnCount = 3,
                 RowCount = 4,
                 Dock = DockStyle.Fill,
                 BackColor = Color.Bisque
 
             };
             Controls.Add(table);
-            //den hittar ej filen why?
-            //view browser
-            //string[] gamesFile = File.ReadAllLines("Games.txt");
 
             listItemsBox = new ListBox
             {
                 //lägg till rubriker (produkt, pris )
                 Size = new Size(300, 300),
-
+                Tag = gamesFile,
             };
             table.Controls.Add(listItemsBox);
+
+            informationTable = new TableLayoutPanel
+            {
+                ColumnCount = 2,
+                Size = new Size(20, 20),
+                Dock = DockStyle.Top,
+            };
+            informationTable.Controls.Add(new Button { Text = "hej" });
+            table.Controls.Add(informationTable);
 
             selectedItemsBox = new ListBox
             {
@@ -66,20 +85,17 @@ namespace ProjektButik
             //_items.Add("Price");
             //listItemsBox.DataSource = _items;
 
-           
-           
+            List<Label> ld = new List<Label>();
 
             foreach (string row in gamesFile)
             {
                 string[] parts = row.Split('|');
-
-                //string[] tempitem = parts[0] + " " + parts[1] + "kr";
-
-                listItemsBox.Items.Add(parts[0] + " " + parts[1] + "kr");
-
+                Label ds = new Label { Name = parts[0] + " " + parts[1], Text = parts[2] };
+                ld.Add(ds);
+                listItemsBox.Items.Add(ds.Name + "kr");
             }
 
-            //if (listItemsBox.Items.)
+
 
             addButton = new Button
             {
@@ -93,7 +109,6 @@ namespace ProjektButik
             //lägga till så att när man klickar på knappen så ska något event ske
             addButton.Click += addButtonClick;
 
-
             removeButton = new Button
             {
                 Text = "<--Remove",
@@ -106,6 +121,15 @@ namespace ProjektButik
             table.Controls.Add(removeButton);
             removeButton.Click += removeButtonClick;
 
+            saveButton = new Button
+            {
+                Text = "Save",
+                Width = 150,
+                Height = 40,
+                Dock = DockStyle.None,
+                BackColor = Color.Blue
+            };
+            table.Controls.Add(saveButton);
             //lägga till så att när man klickar på knappen så ska något event ske
 
             label = new Label
@@ -121,32 +145,66 @@ namespace ProjektButik
                 Dock = DockStyle.None,
             };
             table.Controls.Add(discountBox);
-        }
+            string[] filenames = Directory.GetFiles(@"c:\Users\gatai\source\repos\ProjektButik\ProjektButik\Image");
+            foreach (string name in filenames)
+            {
+                PictureBox pictureBox = new PictureBox
+                {
+                    Image = Image.FromFile(name),
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Dock = DockStyle.Bottom,
+                    Width = 100,
+                    Height = 100,
+                };
+                table.Controls.Add(pictureBox);
+            }
 
+
+
+
+        }
+        //utanför konstruktorn
+        //utanför konstruktorn
+        //utanför konstruktorn
         private void selectedItems(object sender, EventArgs e)
         {
-          
+            //ListBox listBox = (ListBox)sender;
+
+            //string[] gamesFile = (string[])listBox.Tag;
+
+            //string row = gamesFile[listBox.SelectedIndex];
+            //string[] parts = row.Split('|');
+
+            //informationTable.Text = ("You have selected " + listBox.SelectedIndex +
+            //      ": " +
+            //    listBox.SelectedItem + " " + parts[1] + " " + parts[2]);
+
         }
 
         private void removeButtonClick(object sender, EventArgs e)
         {
-            MessageBox.Show("hello");
+            selectedItemsBox.Items.Remove(selectedItemsBox.SelectedItem);
         }
 
         private void addButtonClick(object sender, EventArgs e)
         {
-            foreach (string row in gamesFile)
+            for (int i = 0; i < listItemsBox.Items.Count; i++)
             {
-                string[] parts = row.Split('|');
-                selectedItemsBox.Items.Add(parts[0] + " " + parts[1] + "kr");
+                if (listItemsBox.GetSelected(i))
+                {
+                    string row = gamesFile[i];
+                    string[] parts = row.Split('|');
 
+                    selectedItemsBox.Items.Add(Text = parts[0] + " " + parts[1] + "kr");
+                }
             }
-            selectedItemsBox.Text = ("You have selected " + selectedItemsBox.SelectedIndex);
         }
 
 
 
-        
+
+
+
     }
 }
 

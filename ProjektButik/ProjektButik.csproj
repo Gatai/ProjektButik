@@ -70,6 +70,12 @@
     <Content Include="Games.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Image\battelefield5.jpg.png" />
+    <Content Include="Image\Borderlands_22.jpg" />
+    <Content Include="Image\Borderlands_Pre.jpg" />
+    <Content Include="Image\starcraft.png" />
+    <Content Include="Image\tombrader.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
