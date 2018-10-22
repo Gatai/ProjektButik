@@ -24,15 +24,6 @@ namespace ProjektButik
         private TableLayoutPanel table;
         private TableLayoutPanel informationTable;
 
-
-        public class linkedDes
-        {
-            public string name;
-            public string des;
-            public int id;
-        }
-
-
         string[] gamesFile = File.ReadAllLines("Games.txt");
 
 
@@ -95,8 +86,6 @@ namespace ProjektButik
                 listItemsBox.Items.Add(ds.Name + "kr");
             }
 
-
-
             addButton = new Button
             {
                 Text = "Add -->",
@@ -145,6 +134,8 @@ namespace ProjektButik
                 Dock = DockStyle.None,
             };
             table.Controls.Add(discountBox);
+
+            //ska ta fram en bild åt gången beroende på vad användaren klickar på
             string[] filenames = Directory.GetFiles(@"c:\Users\gatai\source\repos\ProjektButik\ProjektButik\Image");
             foreach (string name in filenames)
             {
@@ -158,9 +149,6 @@ namespace ProjektButik
                 };
                 table.Controls.Add(pictureBox);
             }
-
-
-
 
         }
         //utanför konstruktorn
