@@ -21,18 +21,18 @@ namespace ProjektButik
         private Label label;
 
         private ListView listItemsView;
-        private ListView selectedItemsView;
+        private ListView cartIteamsView;
         private TableLayoutPanel table;
         private TableLayoutPanel informationTable;
         private Label descriptionLabel;
 
-        //string[] gamesFile = File.ReadAllLines("Games.txt");
-
-        private List<Product> products;
+        private List<Product> productList;
+        private Cart cart;
 
         public Butik()
         {
-            products = Product.LoadProducts();
+            productList = Product.LoadProducts();
+            cart = new Cart();
 
             Text = "Game Store";
             Size = new Size(900, 800);
@@ -70,9 +70,9 @@ namespace ProjektButik
 
             informationTable = new TableLayoutPanel
             {
-                ColumnCount = 2,
-                RowCount = 1,
-                Size = new Size(20, 20),
+                ColumnCount = 1,
+                RowCount = 2,
+                Anchor = AnchorStyles.Right,
                 Dock = DockStyle.Fill,
             };
             table.Controls.Add(informationTable);
@@ -81,35 +81,39 @@ namespace ProjektButik
             {
                 //Image = products.First().GetImage(),
                 //Image = Image.FromFile(@"C:\Users\gatai\source\repos\ProjektButik\ProjektButik\Image\battelefield5.jpg"),
-                SizeMode = PictureBoxSizeMode.StretchImage,
+                SizeMode = PictureBoxSizeMode.Zoom,
                 Dock = DockStyle.Top,
-                Width = 100,
-                Height = 100,
+                Width = 150,
+                Height = 150,
             };
             informationTable.Controls.Add(pictureBox);
             listItemsView.SelectedIndexChanged += DisplayD;
 
-            descriptionLabel = new Label();
+            descriptionLabel = new Label()
+            {
+               
+                Dock = DockStyle.Fill
+            };
 
             informationTable.Controls.Add(descriptionLabel);
 
-            selectedItemsView = new ListView
+            cartIteamsView = new ListView
             {
                 View = View.Details,
                 //lägg till rubriker (produkt, pris )
                 Size = new Size(300, 300),
                 Dock = DockStyle.Right
             };
-            table.Controls.Add(selectedItemsView);
-            selectedItemsView.SelectedIndexChanged += selectedItems;
+            table.Controls.Add(cartIteamsView);
+            cartIteamsView.SelectedIndexChanged += selectedItems;
 
-            CreateColumnHeaders(selectedItemsView);
+            CreateColumnHeadersCart(cartIteamsView);
 
             //_items.Add("items");
             //_items.Add("Price");
             //listItemsBox.DataSource = _items;
 
-            foreach (Product product in products)
+            foreach (Product product in productList)
             {
                 listItemsView.Items.Add(product.ToListViewItem());
             }
@@ -189,9 +193,37 @@ namespace ProjektButik
             listView.Columns.Add(colHead1);
 
             ColumnHeader colHead2 = new ColumnHeader();
+            colHead2.Text = "Release";
+            colHead2.Width = -2;
+            listView.Columns.Add(colHead2);
+
+            ColumnHeader colHead3 = new ColumnHeader();
+            colHead3.Text = "Price";
+            colHead3.Width = -2;
+            listView.Columns.Add(colHead3);
+        }
+
+        private void CreateColumnHeadersCart(ListView listView)
+        {
+            ColumnHeader colHead1 = new ColumnHeader();
+            colHead1.Text = "Product";
+            colHead1.Width = -2;
+            listView.Columns.Add(colHead1);
+
+            ColumnHeader colHead2 = new ColumnHeader();
             colHead2.Text = "Price";
             colHead2.Width = -2;
             listView.Columns.Add(colHead2);
+
+            ColumnHeader colHead3 = new ColumnHeader();
+            colHead3.Text = "Count";
+            colHead3.Width = -2;
+            listView.Columns.Add(colHead3);
+
+            ColumnHeader colHead4 = new ColumnHeader();
+            colHead4.Text = "Total:";
+            colHead4.Width = -2;
+            listView.Columns.Add(colHead4);
         }
 
         private void selectedItems(object sender, EventArgs e)
@@ -217,20 +249,15 @@ namespace ProjektButik
         {
             foreach (ListViewItem item in listItemsView.SelectedItems)
             {
-                //foreach (Product product in products)
-                //{
-                //    if (product.Name == item.Text)
-                //    {
-                //        selectedItemsView.Items.Add(product.ToListViewItem());
-                //    }
-                //}
+                Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
-                Product selectedProduct = products.Single(m => m.Name == item.Text);
+                cart.AddProduct(selectedProduct);
 
-                selectedItemsView.Items.Add(selectedProduct.ToListViewItem());
+                cartIteamsView.Items.Add(selectedProduct.ToListViewItem());
+
             }
-            selectedItemsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
-            selectedItemsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+            cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
+            cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
 
             //for (int i = 0; i < listView.Items.Count; i++)
             //{
@@ -245,17 +272,25 @@ namespace ProjektButik
         }
         private void DisplayD (object sender, EventArgs e)
         {
-            try
+            if (listItemsView.SelectedItems.Count > 0)
             {
-                var selectedindex = listItemsView.SelectedIndices[0];
-                var x = listItemsView.SelectedItems[selectedindex].SubItems[0].Text;
-                pictureBox.Image = Image.FromFile(@"Image\" + x + ".jpg");
+                try
+                {
+                    //int selectedindex = listItemsView.SelectedIndices[0];
+
+                    string x = listItemsView.SelectedItems[0].SubItems[0].Text;
+
+                    Product selectedProduct = productList.Single(m => m.Name == x);
+
+                    pictureBox.Image = selectedProduct.GetImage();
+
+                    descriptionLabel.Text = selectedProduct.Description; 
+                }
+                catch (FileNotFoundException ex)
+                {
+                    MessageBox.Show("cant find picture! " + ex.Message);
+                }
             }
-            catch (FileNotFoundException)
-            {
-                MessageBox.Show("cant find picture!");
-            }
-            
         }
 
 

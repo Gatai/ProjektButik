@@ -14,13 +14,15 @@ namespace ProjektButik
         public string Name;
         public int Price;
         public string ImageFileName;
+        public int Release;
         public string Description;
 
-        public Product(string name, int price, string imageFileName, string description)
+        public Product(string name, int price, string imageFileName, int release, string description)
         {
             this.Name = name;
             this.Price = price;
             this.ImageFileName = imageFileName;
+            this.Release = release;
             this.Description = description;
         }
 
@@ -31,7 +33,7 @@ namespace ProjektButik
             
         public ListViewItem ToListViewItem()
         {
-            return new ListViewItem(new string[] { Name, Price.ToString() });
+            return new ListViewItem(new string[] { Name, Release.ToString(), Price.ToString(), });
         }
 
         public static List<Product> LoadProducts()
@@ -44,7 +46,7 @@ namespace ProjektButik
             {
                 string[] parts = row.Split('|');
 
-                products.Add(new Product(parts[0], int.Parse(parts[1]), parts[2], parts[3]));
+                products.Add(new Product(parts[0], int.Parse(parts[1]), parts[2], int.Parse(parts[3]), parts[4]));
 
                 /* Skapa produkt utan konstruktor */
                 //products.Add(new Product()
