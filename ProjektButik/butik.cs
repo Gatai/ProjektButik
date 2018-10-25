@@ -86,8 +86,8 @@ namespace ProjektButik
                 Width = 100,
                 Height = 100,
             };
-
             informationTable.Controls.Add(pictureBox);
+            listItemsView.SelectedIndexChanged += DisplayD;
 
             descriptionLabel = new Label();
 
@@ -132,7 +132,6 @@ namespace ProjektButik
                 Height = 40,
                 Dock = DockStyle.Right,
                 BackColor = Color.Red
-
             };
             table.Controls.Add(removeButton);
             removeButton.Click += removeButtonClick;
@@ -230,7 +229,6 @@ namespace ProjektButik
 
                 selectedItemsView.Items.Add(selectedProduct.ToListViewItem());
             }
-
             selectedItemsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
             selectedItemsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
 
@@ -245,7 +243,20 @@ namespace ProjektButik
             //}
             //}
         }
-
+        private void DisplayD (object sender, EventArgs e)
+        {
+            try
+            {
+                var selectedindex = listItemsView.SelectedIndices[0];
+                var x = listItemsView.SelectedItems[selectedindex].SubItems[0].Text;
+                pictureBox.Image = Image.FromFile(@"Image\" + x + ".jpg");
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("cant find picture!");
+            }
+            
+        }
 
 
 
