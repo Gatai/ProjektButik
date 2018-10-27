@@ -15,19 +15,29 @@ namespace ProjektButik
             ProductsInCart = new Dictionary<Product, int>();
         }
 
-        public void AddProduct (Product p)
+        public void AddProduct (Product product)
         {
-            if (ProductsInCart.ContainsKey(p) )
+            if (ProductsInCart.ContainsKey(product) )
             {
-                ProductsInCart[p] += 1;
+                ProductsInCart[product] += 1;
             }
             else
             {
-                ProductsInCart.Add(p, 1);
+                ProductsInCart.Add(product, 1);
             }
         }
-        public void RemoveProduct (Product p)
+        public void RemoveProduct (Product product)
         {
+            int count = ProductsInCart[product];
+
+            if (count > 1)
+            {
+                ProductsInCart[product] -= 1;
+            }
+            else
+            {
+                ProductsInCart.Remove(product);
+            }
 
         }
 

@@ -20,7 +20,7 @@ namespace ProjektButik
         private View viewItems;
         private Label label;
 
-        private ListView listItemsView;
+        private ListView productsItemsView;
         private ListView cartIteamsView;
         private TableLayoutPanel table;
         private TableLayoutPanel informationTable;
@@ -47,16 +47,16 @@ namespace ProjektButik
             };
             Controls.Add(table);
 
-            listItemsView = new ListView
+            productsItemsView = new ListView
             {
                 View = View.Details,
                 //lägg till rubriker (produkt, pris )
                 Size = new Size(300, 300),
                 //Tag = gamesFile
             };
-            table.Controls.Add(listItemsView);
+            table.Controls.Add(productsItemsView);
 
-            CreateColumnHeaders(listItemsView);
+            CreateColumnHeaders(productsItemsView);
 
             // listItemsview.Columns.Add("Products");
 
@@ -87,7 +87,7 @@ namespace ProjektButik
                 Height = 150,
             };
             informationTable.Controls.Add(pictureBox);
-            listItemsView.SelectedIndexChanged += DisplayD;
+            productsItemsView.SelectedIndexChanged += DisplayD;
 
             descriptionLabel = new Label()
             {
@@ -117,7 +117,7 @@ namespace ProjektButik
 
             foreach (Product product in productList)
             {
-                listItemsView.Items.Add(product.ToListViewItem());
+                productsItemsView.Items.Add(product.ToListViewItem());
             }
 
             addButton = new Button
@@ -245,13 +245,13 @@ namespace ProjektButik
         private void removeButtonClick(object sender, EventArgs e)
         {
             //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
-            foreach (ListViewItem item in listItemsView.SelectedItems)
+            foreach (ListViewItem item in cartIteamsView.SelectedItems)
             {
-
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
-                cart.AddProduct(selectedProduct);
+                cart.RemoveProduct(selectedProduct);
             }
+           
 
             cartIteamsView.Items.Clear();
             foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
@@ -263,9 +263,8 @@ namespace ProjektButik
 
         private void addButtonClick(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listItemsView.SelectedItems)
+            foreach (ListViewItem item in productsItemsView.SelectedItems)
             {
-                
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
                 cart.AddProduct(selectedProduct);
@@ -294,13 +293,13 @@ namespace ProjektButik
         }
         private void DisplayD (object sender, EventArgs e)
         {
-            if (listItemsView.SelectedItems.Count > 0)
+            if (productsItemsView.SelectedItems.Count > 0)
             {
                 try
                 {
                     //int selectedindex = listItemsView.SelectedIndices[0];
 
-                    string x = listItemsView.SelectedItems[0].SubItems[0].Text;
+                    string x = productsItemsView.SelectedItems[0].SubItems[0].Text;
 
                     Product selectedProduct = productList.Single(m => m.Name == x);
 
