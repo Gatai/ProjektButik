@@ -25,7 +25,11 @@ namespace ProjektButik
             {
                 ProductsInCart.Add(p, 1);
             }
-        } 
+        }
+        public void RemoveProduct (Product p)
+        {
+
+        }
 
     }
 }

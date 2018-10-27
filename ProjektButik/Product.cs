@@ -33,7 +33,12 @@ namespace ProjektButik
             
         public ListViewItem ToListViewItem()
         {
-            return new ListViewItem(new string[] { Name, Release.ToString(), Price.ToString(), });
+            return new ListViewItem(new string[] { Name, Release.ToString(), Price.ToString() });
+        }
+
+        public ListViewItem ToCartListViewItem(int count)
+        {
+            return new ListViewItem(new string[] { Name, Price.ToString(), count.ToString(), (count * Price).ToString() });
         }
 
         public static List<Product> LoadProducts()

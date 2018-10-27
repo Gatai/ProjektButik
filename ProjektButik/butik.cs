@@ -107,6 +107,8 @@ namespace ProjektButik
             table.Controls.Add(cartIteamsView);
             cartIteamsView.SelectedIndexChanged += selectedItems;
 
+            
+
             CreateColumnHeadersCart(cartIteamsView);
 
             //_items.Add("items");
@@ -243,19 +245,39 @@ namespace ProjektButik
         private void removeButtonClick(object sender, EventArgs e)
         {
             //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
+            foreach (ListViewItem item in listItemsView.SelectedItems)
+            {
+
+                Product selectedProduct = productList.Single(m => m.Name == item.Text);
+
+                cart.AddProduct(selectedProduct);
+            }
+
+            cartIteamsView.Items.Clear();
+            foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
+            {
+                cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));
+
+            }
         }
 
         private void addButtonClick(object sender, EventArgs e)
         {
             foreach (ListViewItem item in listItemsView.SelectedItems)
             {
+                
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
                 cart.AddProduct(selectedProduct);
-
-                cartIteamsView.Items.Add(selectedProduct.ToListViewItem());
-
             }
+
+            cartIteamsView.Items.Clear();
+            foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
+            {
+                cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));             
+                 
+            }
+
             cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
             cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
 
