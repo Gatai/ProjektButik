@@ -17,9 +17,6 @@ namespace ProjektButik
         private PictureBox pictureBox;
         private TextBox discountBox;
 
-        private View viewItems;
-        private Label label;
-
         private ListView productsItemsView;
         private ListView cartIteamsView;
         private TableLayoutPanel table;
@@ -28,6 +25,7 @@ namespace ProjektButik
 
         private List<Product> productList;
         private Cart cart;
+        private Label totalCost;
 
         public Butik()
         {
@@ -43,19 +41,19 @@ namespace ProjektButik
                 ColumnCount = 3,
                 RowCount = 4,
                 Dock = DockStyle.Fill,
-                BackColor = Color.Bisque
+                AutoSize = true,
+                BackColor = Color.Bisque,
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset,
             };
             Controls.Add(table);
 
             productsItemsView = new ListView
             {
                 View = View.Details,
-                //lägg till rubriker (produkt, pris )
+                Dock = DockStyle.Fill,
                 Size = new Size(300, 300),
-                //Tag = gamesFile
             };
             table.Controls.Add(productsItemsView);
-
             CreateColumnHeaders(productsItemsView);
 
             // listItemsview.Columns.Add("Products");
@@ -87,27 +85,30 @@ namespace ProjektButik
                 Height = 150,
             };
             informationTable.Controls.Add(pictureBox);
-            productsItemsView.SelectedIndexChanged += DisplayD;
+            productsItemsView.SelectedIndexChanged += DisplayDescription;
 
             descriptionLabel = new Label()
             {
-               
+
                 Dock = DockStyle.Fill
             };
-
             informationTable.Controls.Add(descriptionLabel);
 
             cartIteamsView = new ListView
             {
                 View = View.Details,
-                //lägg till rubriker (produkt, pris )
                 Size = new Size(300, 300),
-                Dock = DockStyle.Right
+                Dock = DockStyle.Fill,
             };
+            // table.SetColumnSpan(cartIteamsView, 2);
             table.Controls.Add(cartIteamsView);
-            cartIteamsView.SelectedIndexChanged += selectedItems;
 
-            
+            /////för att få ut en totalkostnaden på skärmen
+            //Label TotalcoustLabel = new Label()
+            //{
+            //    Dock = DockStyle.Fill
+            //};
+            //table.Controls.Add(TotalcoustLabel);
 
             CreateColumnHeadersCart(cartIteamsView);
 
@@ -120,52 +121,55 @@ namespace ProjektButik
                 productsItemsView.Items.Add(product.ToListViewItem());
             }
 
+            FlowLayoutPanel buttonPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.LeftToRight,
+            };
+            table.Controls.Add(buttonPanel);
+
             addButton = new Button
             {
-                Text = "Buy-->",
-                Width = 150,
+                Text = "Buy",
                 Height = 40,
-                Dock = DockStyle.None,
-                BackColor = Color.Green
+                BackColor = Color.LightGray,
             };
-            table.Controls.Add(addButton);
+            buttonPanel.Controls.Add(addButton);
             addButton.Click += addButtonClick;
 
             removeButton = new Button
             {
-                Text = "<--Remove",
-                Width = 150,
+                Text = "Remove",
                 Height = 40,
-                Dock = DockStyle.Right,
-                BackColor = Color.Red
+                BackColor = Color.LightGray
             };
-            table.Controls.Add(removeButton);
+            buttonPanel.Controls.Add(removeButton);
             removeButton.Click += removeButtonClick;
 
             saveButton = new Button
             {
                 Text = "Save",
-                Width = 150,
                 Height = 40,
-                Dock = DockStyle.None,
-                BackColor = Color.Blue
+                BackColor = Color.LightGray
             };
             table.Controls.Add(saveButton);
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
 
-            label = new Label
-            {
-                Text = "Discount Code",
-                Dock = DockStyle.Right,
-                BackColor = Color.Orange
-            };
-            table.Controls.Add(label);
-
             discountBox = new TextBox
             {
+                Text = "Discount Code",
                 Dock = DockStyle.None,
             };
             table.Controls.Add(discountBox);
+            discountBox.Click += DiscountBox_Click;
+            discountBox.KeyUp += DiscountBox_KeyUp;
+
+            totalCost = new Label
+            {
+                Text = "Total:",
+            };
+            table.Controls.Add(totalCost);
+            //panel.SetColumnSpan(totalCost, 2);
 
             //ska ta fram en bild åt gången beroende på vad användaren klickar på
             //string[] filenames = Directory.GetFiles(@"c:\Users\gatai\source\repos\ProjektButik\ProjektButik\Image");
@@ -181,8 +185,56 @@ namespace ProjektButik
             //    };
             //    table.Controls.Add(pictureBox);
             //}
-
         }
+
+        private void DiscountBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (discountBox.Text == "")
+                {
+                    cart.SetDiscountCode(null);
+                    MessageBox.Show("You have no discount");
+                }
+                else
+                {
+                    Discount discount = cart.IsDiscountCodeValid(discountBox.Text);
+
+                    if (discount != null)
+                    {
+                        MessageBox.Show(string.Format("Your discount is {0}%", discount.Percentage));
+                        cart.SetDiscountCode(discount);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid discount code!");
+                    }
+                }
+                // Update the card list view with the current cart
+                UpdateCartListView();
+            }
+        }
+
+        private void DiscountBox_Click(object sender, EventArgs e)
+        {
+            discountBox.SelectAll();
+        }
+
+        private void UpdateCartListView()
+        {
+            // Update the card list view with the current cart
+            cartIteamsView.Items.Clear();
+            foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
+            {
+                cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));
+
+            }
+            cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
+            cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+
+            totalCost.Text = "Total: " + cart.TotalCost().ToString();
+        }
+
         //utanför konstruktorn
         //utanför konstruktorn
         //utanför konstruktorn
@@ -228,20 +280,6 @@ namespace ProjektButik
             listView.Columns.Add(colHead4);
         }
 
-        private void selectedItems(object sender, EventArgs e)
-        {
-            //ListBox listBox = (ListBox)sender;
-
-            //string[] gamesFile = (string[])listBox.Tag;
-
-            //string row = gamesFile[listBox.SelectedIndex];
-            //string[] parts = row.Split('|');
-
-            //informationTable.Text = ("You have selected " + listBox.SelectedIndex +
-            //      ": " +
-            //    listBox.SelectedItem + " " + parts[1] + " " + parts[2]);
-        }
-
         private void removeButtonClick(object sender, EventArgs e)
         {
             //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
@@ -251,7 +289,7 @@ namespace ProjektButik
 
                 cart.RemoveProduct(selectedProduct);
             }
-           
+
 
             cartIteamsView.Items.Clear();
             foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
@@ -263,35 +301,20 @@ namespace ProjektButik
 
         private void addButtonClick(object sender, EventArgs e)
         {
+            // Add selected product to cart
             foreach (ListViewItem item in productsItemsView.SelectedItems)
             {
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
                 cart.AddProduct(selectedProduct);
+
             }
-
-            cartIteamsView.Items.Clear();
-            foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
-            {
-                cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));             
-                 
-            }
-
-            cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
-            cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
-
-            //for (int i = 0; i < listView.Items.Count; i++)
-            //{
-            //if (listItemsView.GetSelected(i))
-            //{
-            //    string row = gamesFile[i];
-            //    string[] parts = row.Split('|');
-
-            //    selectedItemsBox.Items.Add(Text = parts[0] + " " + parts[1] + "kr");
-            //}
-            //}
+            // Update the card list view with the current cart
+            UpdateCartListView();
+            
         }
-        private void DisplayD (object sender, EventArgs e)
+
+        private void DisplayDescription(object sender, EventArgs e)
         {
             if (productsItemsView.SelectedItems.Count > 0)
             {
@@ -305,7 +328,7 @@ namespace ProjektButik
 
                     pictureBox.Image = selectedProduct.GetImage();
 
-                    descriptionLabel.Text = selectedProduct.Description; 
+                    descriptionLabel.Text = selectedProduct.Description;
                 }
                 catch (FileNotFoundException ex)
                 {
@@ -313,6 +336,8 @@ namespace ProjektButik
                 }
             }
         }
+
+        
 
 
 

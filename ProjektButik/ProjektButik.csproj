@@ -52,6 +52,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Cart.cs" />
+    <Compile Include="Discount.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
