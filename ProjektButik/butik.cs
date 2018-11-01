@@ -240,18 +240,21 @@ namespace ProjektButik
         private void SaveCart()
         {
             //string path = File.ReadAllLines("SaveCart.txt");
+
             string SaveCartFile = "SaveCart.txt";
-            string[] lines = new string[productList.Count];
+            StreamWriter saveFileCart = new StreamWriter(SaveCartFile); 
+            string[] lines = new string[cart.ProductsInCart.Count];
 
             int counter = 0;
-            foreach (var item in productList)
+            foreach (var item in cart.ProductsInCart)
             {
-                lines[counter] = item.Name + "|" + item.Price + "|" + item.Description;
+                //lines[counter] = item.Key.Name + "|" + item.Key.Price;
                 counter++;
+
+                saveFileCart.WriteLine(item.Key.Name + " " + "Price: " + item.Key.Price + item.Value.);
+
             }
-
-            File.WriteAllLines(SaveCartFile, lines);
-
+            saveFileCart.Close();
         }
 
         //utanför konstruktorn
