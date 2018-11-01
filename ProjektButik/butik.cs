@@ -13,7 +13,7 @@ namespace ProjektButik
     {
         private Button addButton;
         private Button removeButton;
-        private Button saveButton;
+        private Button conductButton;
         private PictureBox pictureBox;
         private TextBox discountBox;
 
@@ -130,12 +130,12 @@ namespace ProjektButik
 
             addButton = new Button
             {
-                Text = "Buy",
+                Text = "Add",
                 Height = 40,
                 BackColor = Color.LightGray,
             };
             buttonPanel.Controls.Add(addButton);
-            addButton.Click += addButtonClick;
+            addButton.Click += AddButtonClick;
 
             removeButton = new Button
             {
@@ -144,15 +144,15 @@ namespace ProjektButik
                 BackColor = Color.LightGray
             };
             buttonPanel.Controls.Add(removeButton);
-            removeButton.Click += removeButtonClick;
+            removeButton.Click += RemoveButtonClick;
 
-            saveButton = new Button
+            conductButton = new Button
             {
-                Text = "Save",
-                Height = 40,
+                Text = "Conduct purchase",
+                Height = 60,
                 BackColor = Color.LightGray
             };
-            table.Controls.Add(saveButton);
+            table.Controls.Add(conductButton);
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
 
             discountBox = new TextBox
@@ -280,7 +280,12 @@ namespace ProjektButik
             listView.Columns.Add(colHead4);
         }
 
-        private void removeButtonClick(object sender, EventArgs e)
+        private void SaveButton(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void RemoveButtonClick(object sender, EventArgs e)
         {
             //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
             foreach (ListViewItem item in cartIteamsView.SelectedItems)
@@ -289,9 +294,8 @@ namespace ProjektButik
 
                 cart.RemoveProduct(selectedProduct);
             }
-
-
             cartIteamsView.Items.Clear();
+
             foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
             {
                 cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));
@@ -299,7 +303,7 @@ namespace ProjektButik
             }
         }
 
-        private void addButtonClick(object sender, EventArgs e)
+        private void AddButtonClick(object sender, EventArgs e)
         {
             // Add selected product to cart
             foreach (ListViewItem item in productsItemsView.SelectedItems)
@@ -307,11 +311,9 @@ namespace ProjektButik
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
 
                 cart.AddProduct(selectedProduct);
-
             }
             // Update the card list view with the current cart
             UpdateCartListView();
-            
         }
 
         private void DisplayDescription(object sender, EventArgs e)
@@ -336,6 +338,8 @@ namespace ProjektButik
                 }
             }
         }
+
+
 
         
 
