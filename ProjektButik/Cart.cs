@@ -103,15 +103,20 @@ namespace ProjektButik
 
         public void SaveCart()
         {
-            string saveCartFile = "SaveCart.txt";
-            StreamWriter saveFileCart = new StreamWriter(saveCartFile);
+            List<string> lines = new List<string>();
 
             foreach (var item in ProductsInCart)
             {
-                saveFileCart.WriteLine(item.Key.Name + "|" + item.Value);
+                lines.Add(item.Key.Name + "|" + item.Value);
             }
+            
+            File.WriteAllLines("SaveCart.txt", lines);
+        }
 
-            saveFileCart.Close();
+        public string Receipt()
+        {
+            string test = "hej";
+            return test;
         }
     }
 }

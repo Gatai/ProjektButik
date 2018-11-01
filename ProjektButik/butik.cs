@@ -26,6 +26,7 @@ namespace ProjektButik
         private List<Product> productList;
         private Cart cart;
         private Label totalCost;
+        private Button receiptButton;
 
         public Butik()
         {
@@ -145,14 +146,14 @@ namespace ProjektButik
             buttonPanel.Controls.Add(removeButton);
             removeButton.Click += RemoveButtonClick;
 
-            saveButton = new Button
+            receiptButton = new Button
             {
-                Text = "Conduct purchase",
+                Text = "Show receipt",
                 Height = 60,
                 BackColor = Color.LightGray
             };
-            table.Controls.Add(saveButton);
-            //saveButton.Click += SaveCart;
+            table.Controls.Add(receiptButton);
+            receiptButton.Click += ReceiptButton_Click;
 
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
 
@@ -174,6 +175,11 @@ namespace ProjektButik
             cart = new Cart();
             cart.LoadCart(productList);
             UpdateCartListView();
+        }
+
+        private void ReceiptButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(cart.Receipt());
         }
 
         private void DiscountBox_KeyUp(object sender, KeyEventArgs e)
