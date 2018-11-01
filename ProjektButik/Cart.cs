@@ -80,5 +80,38 @@ namespace ProjektButik
             CurrentDiscount = discount;
         }
 
+        public void LoadCart(List<Product> products)
+        {
+            string[] cartFile = File.ReadAllLines("SaveCart.txt");
+
+            foreach (string row in cartFile)
+            {
+                string[] parts = row.Split('|');
+
+                string name = parts[0];
+                int count = int.Parse(parts[1]);
+
+                foreach (Product p in products)
+                {
+                    if (p.Name == name)
+                    {
+                        ProductsInCart.Add(p, count);
+                    }
+                }
+            }
+        }
+
+        public void SaveCart()
+        {
+            string saveCartFile = "SaveCart.txt";
+            StreamWriter saveFileCart = new StreamWriter(saveCartFile);
+
+            foreach (var item in ProductsInCart)
+            {
+                saveFileCart.WriteLine(item.Key.Name + "|" + item.Value);
+            }
+
+            saveFileCart.Close();
+        }
     }
 }

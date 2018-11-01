@@ -30,7 +30,6 @@ namespace ProjektButik
         public Butik()
         {
             productList = Product.LoadProducts();
-            cart = new Cart();
 
             Text = "Game Store";
             Size = new Size(900, 800);
@@ -171,22 +170,10 @@ namespace ProjektButik
                 Text = "Total:",
             };
             table.Controls.Add(totalCost);
-            //panel.SetColumnSpan(totalCost, 2);
 
-            //ska ta fram en bild åt gången beroende på vad användaren klickar på
-            //string[] filenames = Directory.GetFiles(@"c:\Users\gatai\source\repos\ProjektButik\ProjektButik\Image");
-            //foreach (string name in filenames)
-            //{
-            //    PictureBox pictureBox = new PictureBox
-            //    {
-            //        Image = Image.FromFile(name),
-            //        SizeMode = PictureBoxSizeMode.StretchImage,
-            //        Dock = DockStyle.Bottom,
-            //        Width = 100,
-            //        Height = 100,
-            //    };
-            //    table.Controls.Add(pictureBox);
-            //}
+            cart = new Cart();
+            cart.LoadCart(productList);
+            UpdateCartListView();
         }
 
         private void DiscountBox_KeyUp(object sender, KeyEventArgs e)
@@ -237,26 +224,6 @@ namespace ProjektButik
             totalCost.Text = "Total: " + cart.TotalCost().ToString();
         }
 
-        private void SaveCart()
-        {
-            //string path = File.ReadAllLines("SaveCart.txt");
-
-            string SaveCartFile = "SaveCart.txt";
-            StreamWriter saveFileCart = new StreamWriter(SaveCartFile); 
-            string[] lines = new string[cart.ProductsInCart.Count];
-
-            int counter = 0;
-            foreach (var item in cart.ProductsInCart)
-            {
-                //lines[counter] = item.Key.Name + "|" + item.Key.Price;
-                counter++;
-
-                saveFileCart.WriteLine(item.Key.Name + " " + "Price: " + item.Key.Price + item.Value.);
-
-            }
-            saveFileCart.Close();
-        }
-
         //utanför konstruktorn
         //utanför konstruktorn
         //utanför konstruktorn
@@ -302,7 +269,6 @@ namespace ProjektButik
             listView.Columns.Add(colHead4);
         }
 
-        
         //productList
         private void RemoveButtonClick(object sender, EventArgs e)
         {
@@ -313,13 +279,10 @@ namespace ProjektButik
 
                 cart.RemoveProduct(selectedProduct);
             }
-            cartIteamsView.Items.Clear();
+            
+            UpdateCartListView();
 
-            foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
-            {
-                cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));
-
-            }
+            cart.SaveCart();
         }
 
         private void AddButtonClick(object sender, EventArgs e)
@@ -333,7 +296,8 @@ namespace ProjektButik
             }
             // Update the card list view with the current cart
             UpdateCartListView();
-            SaveCart();
+
+            cart.SaveCart();
         }
 
         private void DisplayDescription(object sender, EventArgs e)
@@ -361,7 +325,7 @@ namespace ProjektButik
 
 
 
-        
+
 
 
 
