@@ -13,7 +13,7 @@ namespace ProjektButik
     {
         private Button addButton;
         private Button removeButton;
-        private Button conductButton;
+        private Button saveButton;
         private PictureBox pictureBox;
         private TextBox discountBox;
 
@@ -42,7 +42,7 @@ namespace ProjektButik
                 RowCount = 4,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                BackColor = Color.Bisque,
+                BackColor = Color.LightBlue,
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset,
             };
             Controls.Add(table);
@@ -146,13 +146,15 @@ namespace ProjektButik
             buttonPanel.Controls.Add(removeButton);
             removeButton.Click += RemoveButtonClick;
 
-            conductButton = new Button
+            saveButton = new Button
             {
                 Text = "Conduct purchase",
                 Height = 60,
                 BackColor = Color.LightGray
             };
-            table.Controls.Add(conductButton);
+            table.Controls.Add(saveButton);
+            saveButton.Click += SaveButton;
+
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
 
             discountBox = new TextBox
@@ -282,7 +284,10 @@ namespace ProjektButik
 
         private void SaveButton(object sender, EventArgs e)
         {
-            
+            //string path = File.ReadAllLines("SaveCart.txt");
+
+            //string[] discountFile = File.ReadAllLines("SaveCart.txt");
+
         }
 
         private void RemoveButtonClick(object sender, EventArgs e)
