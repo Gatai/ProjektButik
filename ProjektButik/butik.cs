@@ -153,7 +153,7 @@ namespace ProjektButik
                 BackColor = Color.LightGray
             };
             table.Controls.Add(saveButton);
-            saveButton.Click += SaveButton;
+            //saveButton.Click += SaveCart;
 
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
 
@@ -237,6 +237,23 @@ namespace ProjektButik
             totalCost.Text = "Total: " + cart.TotalCost().ToString();
         }
 
+        private void SaveCart()
+        {
+            //string path = File.ReadAllLines("SaveCart.txt");
+            string SaveCartFile = "SaveCart.txt";
+            string[] lines = new string[productList.Count];
+
+            int counter = 0;
+            foreach (var item in productList)
+            {
+                lines[counter] = item.Name + "|" + item.Price + "|" + item.Description;
+                counter++;
+            }
+
+            File.WriteAllLines(SaveCartFile, lines);
+
+        }
+
         //utanför konstruktorn
         //utanför konstruktorn
         //utanför konstruktorn
@@ -282,14 +299,8 @@ namespace ProjektButik
             listView.Columns.Add(colHead4);
         }
 
-        private void SaveButton(object sender, EventArgs e)
-        {
-            //string path = File.ReadAllLines("SaveCart.txt");
-
-            //string[] discountFile = File.ReadAllLines("SaveCart.txt");
-
-        }
-
+        
+        //productList
         private void RemoveButtonClick(object sender, EventArgs e)
         {
             //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
@@ -319,6 +330,7 @@ namespace ProjektButik
             }
             // Update the card list view with the current cart
             UpdateCartListView();
+            SaveCart();
         }
 
         private void DisplayDescription(object sender, EventArgs e)
