@@ -48,7 +48,7 @@ namespace ProjektButik
         {
             //gör samma sak nedan
             //return ProductsInCart.Sum(m => m.Key.Price * m.Value);
-            
+
             decimal sum = 0;
             foreach (KeyValuePair<Product, int> p in ProductsInCart)
             {
@@ -82,6 +82,12 @@ namespace ProjektButik
 
         public void LoadCart(List<Product> products)
         {
+            if (!File.Exists("SaveCart.txt"))
+                //using (StreamWriter SaveCart.txt = File.CreateText("SaveCart.txt"))
+            {
+                return;
+            }
+
             string[] cartFile = File.ReadAllLines("SaveCart.txt");
 
             foreach (string row in cartFile)
@@ -109,7 +115,7 @@ namespace ProjektButik
             {
                 lines.Add(item.Key.Name + "|" + item.Value);
             }
-            
+
             File.WriteAllLines("SaveCart.txt", lines);
         }
 

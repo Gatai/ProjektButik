@@ -35,9 +35,5 @@ namespace ProjektButik
             }
             return discounts;
         }
-
-
-
-
     }
 }
