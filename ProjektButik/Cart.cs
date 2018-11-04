@@ -44,11 +44,24 @@ namespace ProjektButik
             }
         }
 
+        public decimal TotalDiscount()
+        {
+            decimal sum = 0;
+            foreach (KeyValuePair<Product, int> p in ProductsInCart)
+            {
+                sum += p.Key.Price * p.Value;
+            }
+
+            if (CurrentDiscount != null)
+            {
+                return (sum * (CurrentDiscount.Percentage / 100));
+            }
+
+            return 0;
+        }
+
         public decimal TotalCost()
         {
-            //gör samma sak nedan
-            //return ProductsInCart.Sum(m => m.Key.Price * m.Value);
-
             decimal sum = 0;
             foreach (KeyValuePair<Product, int> p in ProductsInCart)
             {
@@ -82,13 +95,13 @@ namespace ProjektButik
 
         public void LoadCart(List<Product> products)
         {
-            if (!File.Exists("SaveCart.txt"))
-                //using (StreamWriter SaveCart.txt = File.CreateText("SaveCart.txt"))
+            //om filen inte finns så läses inte filen 
+            if (!File.Exists(@"C:\Windows\Temp\SaveCart.txt"))
             {
                 return;
             }
 
-            string[] cartFile = File.ReadAllLines("SaveCart.txt");
+            string[] cartFile = File.ReadAllLines(@"C:\Windows\Temp\SaveCart.txt");
 
             foreach (string row in cartFile)
             {
@@ -115,14 +128,43 @@ namespace ProjektButik
             {
                 lines.Add(item.Key.Name + "|" + item.Value);
             }
-
-            File.WriteAllLines("SaveCart.txt", lines);
+            //skapar en file om den inte finns. lägger till värden man har i lines
+            File.WriteAllLines(@"C:\Windows\Temp\SaveCart.txt", lines);
         }
 
         public string Receipt()
         {
-            string test = "hej";
-            return test;
+            //de som finns i productincart ska man ha en sammankoppling till receipt.
+            //göra som i savecart
+
+            List<string> lines = new List<string>();
+            lines.Add("Game Store");
+            lines.Add("");
+
+            foreach (var item in ProductsInCart)
+            {
+                string productName = item.Key.Name;
+                if (productName.Length > 20)
+                {
+                    productName = productName.Substring(0, 20);
+                }
+                lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, productName, item.Key.Price, (item.Key.Price * item.Value)));
+            }
+
+            lines.Add("");
+
+            if (CurrentDiscount != null)
+            {
+                lines.Add(string.Format("Discount {0} %", CurrentDiscount.Percentage));
+            }
+
+            lines.Add(string.Format("Total Discount {0} kr", TotalDiscount()));
+
+            lines.Add(string.Format("Total {0} Kr", TotalCost()));
+            
+            
+
+            return string.Join("\n", lines);
         }
     }
 }

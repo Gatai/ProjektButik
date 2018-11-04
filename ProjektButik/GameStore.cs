@@ -9,7 +9,7 @@ using System.IO;
 
 namespace ProjektButik
 {
-    class Butik : Form
+    class GameStore : Form
     {
         private Button addButton;
         private Button removeButton;
@@ -28,7 +28,7 @@ namespace ProjektButik
         private Label totalCost;
         private Button receiptButton;
 
-        public Butik()
+        public GameStore()
         {
             productList = Product.LoadProducts();
 

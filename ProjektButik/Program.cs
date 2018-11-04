@@ -16,7 +16,7 @@ namespace ProjektButik
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Butik());
+            Application.Run(new GameStore());
         }
 
     }
