@@ -31,28 +31,59 @@ namespace ProjektButik
         public GameStore()
         {
             productList = Product.LoadProducts();
-
             Text = "Game Store";
             Size = new Size(1000, 500);
             Font = new Font("corbel", 10);
+            MinimumSize = new Size(700, 500);
+            StartPosition = FormStartPosition.CenterScreen;            
 
-            Panel mainPanel = new Panel()
+            TableLayoutPanel mainPanel = new TableLayoutPanel()
             {
                 Dock = DockStyle.Fill,
-                //FlowDirection = FlowDirection.TopDown
+                RowCount = 2,
+                ColumnCount = 3,
+                BackColor = Color.LightBlue
             };
+            mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
+            mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));
+            mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
+
 
             Controls.Add(mainPanel);
 
-            Label title = new Label()
+            Label items = new Label()
             {
-                Text = "Butik",
+                Text = "Products for sales",
                 Height = 30,
-                Font = new Font("corbel", 20),
-                Dock = DockStyle.Top
+                Font = new Font("corbel", 14),
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleCenter
             };
 
-            mainPanel.Controls.Add(title);
+            mainPanel.Controls.Add(items);
+
+            Label store = new Label()
+            {
+                Text = "Game Store",
+                Height = 30,
+                Font = new Font("corbel", 20),
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            mainPanel.Controls.Add(store);
+
+            Label cartView = new Label()
+            {
+                Text = "Cart",
+                Height = 30,
+                Font = new Font("corbel", 14),
+                Dock = DockStyle.Top,
+                TextAlign = ContentAlignment.MiddleCenter
+
+            };
+
+            mainPanel.Controls.Add(cartView);
 
             table = new TableLayoutPanel
             {
@@ -61,16 +92,17 @@ namespace ProjektButik
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 BackColor = Color.LightBlue,
-                CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset,
+                //CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset
             };
+            mainPanel.SetColumnSpan(table, 3);
             mainPanel.Controls.Add(table);
 
             table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 35 });
             table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 30 });
             table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 35 });
 
-            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Percent, Height = 80 });
-            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.AutoSize });
+            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Percent, Height = 100 });
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             productsItemsView = new ListView
             {
@@ -148,7 +180,7 @@ namespace ProjektButik
             FlowLayoutPanel buttonPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
-                FlowDirection = FlowDirection.LeftToRight,
+                FlowDirection = FlowDirection.LeftToRight
             };
             table.Controls.Add(buttonPanel);
 
@@ -335,7 +367,7 @@ namespace ProjektButik
 
                 cart.RemoveProduct(selectedProduct);
             }
-            
+
             UpdateCartListView();
 
             cart.SaveCart();
@@ -388,15 +420,6 @@ namespace ProjektButik
                 }
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }
 
