@@ -13,7 +13,8 @@ namespace ProjektButik
     {
         private Button addButton;
         private Button removeButton;
-        private Button saveButton;
+        private Button clearCart;
+        private Button receiptButton;
         private PictureBox pictureBox;
         private TextBox discountBox;
 
@@ -26,26 +27,50 @@ namespace ProjektButik
         private List<Product> productList;
         private Cart cart;
         private Label totalCost;
-        private Button receiptButton;
 
         public GameStore()
         {
             productList = Product.LoadProducts();
 
             Text = "Game Store";
-            Size = new Size(900, 800);
+            Size = new Size(1000, 500);
             Font = new Font("corbel", 10);
+
+            Panel mainPanel = new Panel()
+            {
+                Dock = DockStyle.Fill,
+                //FlowDirection = FlowDirection.TopDown
+            };
+
+            Controls.Add(mainPanel);
+
+            Label title = new Label()
+            {
+                Text = "Butik",
+                Height = 30,
+                Font = new Font("corbel", 20),
+                Dock = DockStyle.Top
+            };
+
+            mainPanel.Controls.Add(title);
 
             table = new TableLayoutPanel
             {
                 ColumnCount = 3,
-                RowCount = 4,
+                RowCount = 2,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 BackColor = Color.LightBlue,
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset,
             };
-            Controls.Add(table);
+            mainPanel.Controls.Add(table);
+
+            table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 35 });
+            table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 30 });
+            table.ColumnStyles.Add(new ColumnStyle() { SizeType = SizeType.Percent, Width = 35 });
+
+            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.Percent, Height = 80 });
+            table.RowStyles.Add(new RowStyle() { SizeType = SizeType.AutoSize });
 
             productsItemsView = new ListView
             {
@@ -89,7 +114,6 @@ namespace ProjektButik
 
             descriptionLabel = new Label()
             {
-
                 Dock = DockStyle.Fill
             };
             informationTable.Controls.Add(descriptionLabel);
@@ -146,31 +170,57 @@ namespace ProjektButik
             buttonPanel.Controls.Add(removeButton);
             removeButton.Click += RemoveButtonClick;
 
-            receiptButton = new Button
+            clearCart = new Button
             {
-                Text = "Show receipt",
-                Height = 60,
+                Text = "Clear cart",
+                Height = 40,
                 BackColor = Color.LightGray
             };
-            table.Controls.Add(receiptButton);
-            receiptButton.Click += ReceiptButton_Click;
+            buttonPanel.Controls.Add(clearCart);
+            clearCart.Click += ClearCart_Click; ;
+
+            //panel som skräpas bara 
+            table.Controls.Add(new Panel());
 
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
+            FlowLayoutPanel costPanel = new FlowLayoutPanel
+            {
+                //ColumnCount = 2,
+                //RowCount = 2,
+                FlowDirection = FlowDirection.LeftToRight,
+                Dock = DockStyle.Fill,
+            };
+            table.Controls.Add(costPanel);
 
             discountBox = new TextBox
             {
                 Text = "Discount Code",
-                Dock = DockStyle.None,
+                //Dock = DockStyle.Left,
+                //BackColor = Color.Green
             };
-            table.Controls.Add(discountBox);
+            costPanel.Controls.Add(discountBox);
             discountBox.Click += DiscountBox_Click;
             discountBox.KeyUp += DiscountBox_KeyUp;
 
             totalCost = new Label
             {
+                Margin = new Padding(0, 5, 0, 0),
                 Text = "Total:",
+                //Dock = DockStyle.Fill,
+                //BackColor = Color.Blue
             };
-            table.Controls.Add(totalCost);
+            costPanel.Controls.Add(totalCost);
+
+            receiptButton = new Button
+            {
+                Text = "Show receipt",
+                Width = 100,
+                Height = 40,
+                BackColor = Color.LightGray,
+                //Dock = DockStyle.Right,
+            };
+            costPanel.Controls.Add(receiptButton);
+            receiptButton.Click += ReceiptButton_Click;
 
             cart = new Cart();
             cart.LoadCart(productList);
@@ -270,7 +320,7 @@ namespace ProjektButik
             listView.Columns.Add(colHead3);
 
             ColumnHeader colHead4 = new ColumnHeader();
-            colHead4.Text = "Total:";
+            colHead4.Text = "Total";
             colHead4.Width = -2;
             listView.Columns.Add(colHead4);
         }
@@ -303,6 +353,16 @@ namespace ProjektButik
             // Update the card list view with the current cart
             UpdateCartListView();
 
+            cart.SaveCart();
+        }
+
+        private void ClearCart_Click(object sender, EventArgs e)
+        {
+            cartIteamsView.Items.Clear();
+            cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
+            cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+
+            cart.ProductsInCart.Clear();
             cart.SaveCart();
         }
 
