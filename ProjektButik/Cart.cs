@@ -46,15 +46,30 @@ namespace ProjektButik
 
         public decimal TotalDiscount()
         {
-            decimal sum = 0;
-            foreach (KeyValuePair<Product, int> p in ProductsInCart)
-            {
-                sum += p.Key.Price * p.Value;
-            }
-
             if (CurrentDiscount != null)
             {
-                return (sum * (CurrentDiscount.Percentage / 100));
+                if (CurrentDiscount.ProductName == "*")
+                {
+                    decimal sum = 0;
+                    foreach (KeyValuePair<Product, int> p in ProductsInCart)
+                    {
+                        sum += p.Key.Price * p.Value;
+                    }
+
+                    return (sum * (CurrentDiscount.Percentage / 100));
+                }
+                else // Discount gäller bara en produkt
+                {
+                    foreach (KeyValuePair<Product, int> p in ProductsInCart)
+                    {
+                        if (p.Key.Name == CurrentDiscount.ProductName)
+                        {
+                            decimal sum = p.Key.Price * p.Value;
+
+                            return (sum * (CurrentDiscount.Percentage / 100));
+                        }
+                    }
+                }
             }
 
             return 0;
@@ -68,15 +83,12 @@ namespace ProjektButik
                 sum += p.Key.Price * p.Value;
             }
 
-            if (CurrentDiscount != null)
-            {
-                sum = sum - (sum * (CurrentDiscount.Percentage / 100));
-            }
+            sum -= TotalDiscount();
 
             return sum;
         }
 
-        public Discount IsDiscountCodeValid(string code)
+        public Discount DiscountCodeExists(string code)
         {
             if (Discounts.ContainsKey(code) == true)
             {
@@ -88,11 +100,17 @@ namespace ProjektButik
             }
         }
 
+        public bool ContainDiscountProduct(Discount discount)
+        {
+            return ProductsInCart.Any(m => m.Key.Name == discount.ProductName);
+        }
+
         public void SetDiscountCode(Discount discount)
         {
             CurrentDiscount = discount;
         }
 
+        //varorna ifrån carten i en text fil
         public void LoadCart(List<Product> products)
         {
             //om filen inte finns så läses inte filen 
@@ -102,8 +120,13 @@ namespace ProjektButik
             }
 
             string[] cartFile = File.ReadAllLines(@"C:\Windows\Temp\SaveCart.txt");
-
-            foreach (string row in cartFile)
+            
+            if (string.IsNullOrEmpty(cartFile[0]) == false)
+            {
+                CurrentDiscount = Discounts.SingleOrDefault(m => m.Key == cartFile[0]).Value;
+            }
+                
+            foreach (string row in cartFile.Skip(1))
             {
                 string[] parts = row.Split('|');
 
@@ -122,21 +145,29 @@ namespace ProjektButik
 
         public void SaveCart()
         {
+            //spara i text fil
             List<string> lines = new List<string>();
+
+            if (CurrentDiscount == null)
+            {
+                lines.Add("");
+            }
+            else
+            {
+                lines.Add(CurrentDiscount.Code);
+            }
 
             foreach (var item in ProductsInCart)
             {
                 lines.Add(item.Key.Name + "|" + item.Value);
             }
+
             //skapar en file om den inte finns. lägger till värden man har i lines
             File.WriteAllLines(@"C:\Windows\Temp\SaveCart.txt", lines);
         }
 
         public string Receipt()
         {
-            //de som finns i productincart ska man ha en sammankoppling till receipt.
-            //göra som i savecart
-
             List<string> lines = new List<string>();
             lines.Add("Game Store");
             lines.Add("");
@@ -148,21 +179,39 @@ namespace ProjektButik
                 {
                     productName = productName.Substring(0, 20);
                 }
-                lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, productName, item.Key.Price, (item.Key.Price * item.Value)));
+
+                lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, 
+                                                                       productName, 
+                                                                       item.Value > 1 ? item.Key.Price.ToString() : string.Empty, 
+                                                                       (item.Key.Price * item.Value)));
+
+                //if (item.Value > 1)
+                //{
+                //    lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, productName, item.Key.Price, (item.Key.Price * item.Value)));
+                //}
+                //else
+                //{
+                //    lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, productName, string.Empty, (item.Key.Price * item.Value)));
+                //}
             }
 
             lines.Add("");
 
             if (CurrentDiscount != null)
             {
-                lines.Add(string.Format("Discount {0} %", CurrentDiscount.Percentage));
+                if (CurrentDiscount.ProductName == "*")
+                {
+                    lines.Add(string.Format("Discount {0} %", CurrentDiscount.Percentage));
+                }
+                else
+                {
+                    lines.Add(string.Format("Discount {0} % for {1}", CurrentDiscount.Percentage, CurrentDiscount.ProductName));
+                }
             }
 
             lines.Add(string.Format("Total Discount {0} kr", TotalDiscount()));
 
             lines.Add(string.Format("Total {0} Kr", TotalCost()));
-            
-            
 
             return string.Join("\n", lines);
         }

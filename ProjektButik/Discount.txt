@@ -1,4 +1,4 @@
-﻿Fredag13th|10|2018-09-01
-Lowko|25|2020-09-01
-Delicatboll|50|2020-09-01
-Rabat420|4,2|2020-09-01
+﻿Fredag13th|*|10|2018-09-01
+Lowko|Starcraft 2|25|2020-09-01
+Delicatboll|*|50|2020-09-01
+Rabat420|Battlefield V|4,2|2020-09-01

@@ -10,13 +10,14 @@ namespace ProjektButik
     class Discount
     {
         public string Code;
+        public string ProductName;
         public decimal Percentage;
         public DateTime Expire;
 
-
-        public Discount(string code, decimal percentage, DateTime expire)
+        public Discount(string code, string productName, decimal percentage, DateTime expire)
         {
             this.Code = code;
+            this.ProductName = productName;
             this.Percentage = percentage;
             this.Expire= expire;
         }
@@ -31,7 +32,7 @@ namespace ProjektButik
             {
                 string[] parts = row.Split('|');
 
-                discounts.Add(parts[0], new Discount(parts[0], decimal.Parse(parts[1]), DateTime.Parse(parts[2])));
+                discounts.Add(parts[0], new Discount(parts[0], parts[1], decimal.Parse(parts[2]), DateTime.Parse(parts[3])));
             }
             return discounts;
         }

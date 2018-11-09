@@ -74,7 +74,6 @@ namespace ProjektButik
                 //product.Price = int.Parse(parts[1]);
                 //products.Add(product);
             }
-
             return products;
         }
     }

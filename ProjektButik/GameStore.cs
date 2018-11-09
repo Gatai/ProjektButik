@@ -31,7 +31,7 @@ namespace ProjektButik
         public GameStore()
         {
             productList = Product.LoadProducts();
-            Text = "Game Store";
+            Text = "GAME STORE";
             Size = new Size(1000, 500);
             Font = new Font("corbel", 10);
             MinimumSize = new Size(700, 500);
@@ -48,12 +48,11 @@ namespace ProjektButik
             mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));
             mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));
 
-
             Controls.Add(mainPanel);
 
             Label items = new Label()
             {
-                Text = "Products for sales",
+                Text = "PRODUCTS FOR SALES",
                 Height = 30,
                 Font = new Font("corbel", 14),
                 Dock = DockStyle.Top,
@@ -64,7 +63,7 @@ namespace ProjektButik
 
             Label store = new Label()
             {
-                Text = "Game Store",
+                Text = "GAME STORE",
                 Height = 30,
                 Font = new Font("corbel", 20),
                 Dock = DockStyle.Top,
@@ -75,12 +74,11 @@ namespace ProjektButik
 
             Label cartView = new Label()
             {
-                Text = "Cart",
+                Text = "CART",
                 Height = 30,
                 Font = new Font("corbel", 14),
                 Dock = DockStyle.Top,
                 TextAlign = ContentAlignment.MiddleCenter
-
             };
 
             mainPanel.Controls.Add(cartView);
@@ -211,14 +209,12 @@ namespace ProjektButik
             buttonPanel.Controls.Add(clearCart);
             clearCart.Click += ClearCart_Click; ;
 
-            //panel som skräpas bara 
+            //panel som skräpas bara (så att kvitto knappen kommer upp)
             table.Controls.Add(new Panel());
 
             //lägga till så att när man klickar på knappen så ska varukorgen sparas i en textfile
             FlowLayoutPanel costPanel = new FlowLayoutPanel
             {
-                //ColumnCount = 2,
-                //RowCount = 2,
                 FlowDirection = FlowDirection.LeftToRight,
                 Dock = DockStyle.Fill,
             };
@@ -254,9 +250,16 @@ namespace ProjektButik
             costPanel.Controls.Add(receiptButton);
             receiptButton.Click += ReceiptButton_Click;
 
+            this.FormClosing += GameStore_FormClosing;
+
             cart = new Cart();
             cart.LoadCart(productList);
             UpdateCartListView();
+        }
+
+        private void GameStore_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            cart.SaveCart();
         }
 
         private void ReceiptButton_Click(object sender, EventArgs e)
@@ -275,16 +278,37 @@ namespace ProjektButik
                 }
                 else
                 {
-                    Discount discount = cart.IsDiscountCodeValid(discountBox.Text);
+                    Discount discount = cart.DiscountCodeExists(discountBox.Text);
 
                     if (discount != null)
                     {
-                        MessageBox.Show(string.Format("Your discount is {0}%", discount.Percentage));
-                        cart.SetDiscountCode(discount);
+                        if (discount.Expire < DateTime.Now)
+                        {
+                            MessageBox.Show(string.Format("The discount code has expired at {0}.", discount.Expire.ToShortDateString()));
+                            discountBox.Text = "";
+                        }
+                        else if (discount.ProductName != "*" && cart.ContainDiscountProduct(discount) == false)
+                        {
+                            MessageBox.Show(string.Format("The discount code is only valid for {0}.", discount.ProductName));
+                            discountBox.Text = "";
+                        }
+                        else
+                        {
+                            if (discount.ProductName == "*")
+                            {
+                                MessageBox.Show(string.Format("Your discount is {0}%", discount.Percentage));
+                            }
+                            else
+                            {
+                                MessageBox.Show(string.Format("Your discount is {0}% for {1}.", discount.Percentage, discount.ProductName));
+                            }
+                            cart.SetDiscountCode(discount);
+                        }
                     }
                     else
                     {
                         MessageBox.Show("Invalid discount code!");
+                        discountBox.Text = "";
                     }
                 }
                 // Update the card list view with the current cart
@@ -304,7 +328,6 @@ namespace ProjektButik
             foreach (KeyValuePair<Product, int> item in cart.ProductsInCart)
             {
                 cartIteamsView.Items.Add(item.Key.ToCartListViewItem(item.Value));
-
             }
             cartIteamsView.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
             cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -360,7 +383,6 @@ namespace ProjektButik
         //productList
         private void RemoveButtonClick(object sender, EventArgs e)
         {
-            //selectedItemsView.Items.Remove(selectedItemsView.SelectedItem);
             foreach (ListViewItem item in cartIteamsView.SelectedItems)
             {
                 Product selectedProduct = productList.Single(m => m.Name == item.Text);
@@ -368,9 +390,13 @@ namespace ProjektButik
                 cart.RemoveProduct(selectedProduct);
             }
 
-            UpdateCartListView();
+            if (cart.CurrentDiscount.ProductName != "*" && cart.ContainDiscountProduct(cart.CurrentDiscount) == false)
+            {
+                cart.CurrentDiscount = null;
+                discountBox.Text = "";
+            }
 
-            cart.SaveCart();
+            UpdateCartListView();
         }
 
         private void AddButtonClick(object sender, EventArgs e)
@@ -384,8 +410,6 @@ namespace ProjektButik
             }
             // Update the card list view with the current cart
             UpdateCartListView();
-
-            cart.SaveCart();
         }
 
         private void ClearCart_Click(object sender, EventArgs e)
@@ -395,7 +419,6 @@ namespace ProjektButik
             cartIteamsView.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
 
             cart.ProductsInCart.Clear();
-            cart.SaveCart();
         }
 
         private void DisplayDescription(object sender, EventArgs e)

@@ -48,12 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BetterMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BetterMessageBox.Designer.cs">
-      <DependentUpon>BetterMessageBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="GameStore.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,9 +67,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BetterMessageBox.resx">
-      <DependentUpon>BetterMessageBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GameStore.resx">
       <DependentUpon>GameStore.cs</DependentUpon>
     </EmbeddedResource>
