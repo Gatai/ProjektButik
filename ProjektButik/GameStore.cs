@@ -253,8 +253,15 @@ namespace ProjektButik
             this.FormClosing += GameStore_FormClosing;
 
             cart = new Cart();
-            cart.LoadCart(productList);
-            UpdateCartListView();
+            try
+            {
+                cart.LoadCart(productList);
+                UpdateCartListView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load the saved cart, error: " + ex.Message);
+            }
         }
 
         private void GameStore_FormClosing(object sender, FormClosingEventArgs e)
