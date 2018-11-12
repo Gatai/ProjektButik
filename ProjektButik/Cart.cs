@@ -179,7 +179,7 @@ namespace ProjektButik
                 {
                     productName = productName.Substring(0, 20);
                 }
-
+                //index 0 och -8 tecken lång
                 lines.Add(string.Format("{0,-8} {1,-25} {2,7} {3,10}", item.Value, 
                                                                        productName, 
                                                                        item.Value > 1 ? item.Key.Price.ToString() : string.Empty, 

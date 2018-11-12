@@ -397,7 +397,7 @@ namespace ProjektButik
                 cart.RemoveProduct(selectedProduct);
             }
 
-            if (cart.CurrentDiscount.ProductName != "*" && cart.ContainDiscountProduct(cart.CurrentDiscount) == false)
+            if (cart.CurrentDiscount != null && cart.CurrentDiscount.ProductName != "*" && cart.ContainDiscountProduct(cart.CurrentDiscount) == false)
             {
                 cart.CurrentDiscount = null;
                 discountBox.Text = "";
