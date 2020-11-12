@@ -1,5 +1,5 @@
 # ProjektButik
-
+Projektarbetet går ut på att implementera ett GUI-program med C# och Windows Forms som simulerar en butik. 
 ## Funktioner för programmet
 
 - En lista med produkter som låter kunden se information om produkterna och lägga till dem i sin varukorg.
