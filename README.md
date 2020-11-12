@@ -10,6 +10,7 @@
 - En textfil som med valfritt textbaserat format låter anställda bestämma vilka rabattkoder som är giltiga. Denna del behöver inte ha ett GUI.
 - Möjlighet att spara varukorgen så att den kan laddas in (automatiskt eller manuellt) nästa gång programmet startas. För enkelhets skull ska varukorgen sparas i någon form av textfil inuti C:\Windows\Temp.
 
+### Utseende på projektet
 <p align="center">
   <a href="https://github.com/Gatai/ProjektButik">
     <img src="ProjektButik/Image/PhotoOnLayout.PNG" width="750px">
