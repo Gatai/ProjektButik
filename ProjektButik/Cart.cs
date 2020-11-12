@@ -17,7 +17,7 @@ namespace ProjektButik
             ProductsInCart = new Dictionary<Product, int>();
             Discounts = Discount.LoadDiscounts();
         }
-
+        //kontrollerar om det stämmer
         public void AddProduct(Product product)
         {
             if (ProductsInCart.ContainsKey(product))
@@ -29,7 +29,7 @@ namespace ProjektButik
                 ProductsInCart.Add(product, 1);
             }
         }
-
+        //kontrollerar om det stämmer
         public void RemoveProduct(Product product)
         {
             int count = ProductsInCart[product];

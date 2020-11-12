@@ -36,5 +36,6 @@ namespace ProjektButik
             }
             return discounts;
         }
+        //lägga till metoden discount_keyUp här
     }
 }
